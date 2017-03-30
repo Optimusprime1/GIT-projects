@@ -1,0 +1,122 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
+        x:Name="WinMainWindow" x:Class="TestCaseExtractor.MainWindow"
+        Title="Welcome Quality Assurance Automatizon Tool-Veripark" Height="475" Width="615" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="Gray"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="SaveButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true" CornerRadius="30" Height="Auto" Width="Auto" Style="{DynamicResource FocusVisual}" Margin="2,0,-2,0">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="5,3,0,2" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Style="{DynamicResource FocusVisual}" Height="15" RenderTransformOrigin="0.5,0.5" Width="40">
+                                <ContentPresenter.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1"/>
+                                        <SkewTransform/>
+                                        <RotateTransform/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </ContentPresenter.RenderTransform>
+                            </ContentPresenter>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid  Height="450" Margin="0">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="Black" Offset="0.0" />
+                <GradientStop Color="Gray" Offset="0.5" />
+                <GradientStop Color="White" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Button x:Name="BtnConnect" Content="..." Height="23" HorizontalAlignment="Left" Margin="520,16,0,0" VerticalAlignment="Top" Width="23" Click="BtnConnect_Click" Visibility="Hidden"/>
+        <Button x:Name="BtnConnectForExcel" Content="..." Height="23" HorizontalAlignment="Left" Margin="520,16,0,0" VerticalAlignment="Top" Width="23" Click="BtnConnectForExcel_Click"  Visibility="Hidden"/>
+        <Label x:Name="Label1" Content="Connect to Team Foundation Server" Height="28" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Foreground="AliceBlue" FontStyle="Italic" FontSize="13" Width="220" Visibility="Hidden" />
+        <Label x:Name="Label2" Content="Upload Requirement Document" Height="28" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" FontSize="13" FontStyle="Italic" Foreground="AliceBlue" Visibility="Hidden"/>
+        <Label x:Name="Label3" Content="Specify the path for new Excel Workbook" Height="28" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" FontSize="13" FontStyle="Italic" Foreground="AliceBlue" Visibility="Hidden"/>
+        <Button x:Name="BtnOpenFileDialog" Content="..." Height="23" Margin="0,60,66,0" VerticalAlignment="Top" Click="BtnOpenFileDialog_Click" Width="23" HorizontalAlignment="Right" Visibility="Hidden"/>
+        <Button x:Name="BtnOpenFileDialogForExcel" Content="..." Height="23" Margin="0,60,66,0" VerticalAlignment="Top" Click="BtnOpenFileDialogForExcel_Click" Width="23" HorizontalAlignment="Right" Visibility="Hidden"/>
+        <TextBox x:Name="TbFileName" Height="23" Margin="252,61,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="253" IsEnabled="False"  Visibility="Hidden"/>
+        <TextBox x:Name="TbFileNameForExcel" Height="23" HorizontalAlignment="Left" Margin="252,61,0,0" VerticalAlignment="Top" Width="253" IsReadOnly="True" IsEnabled="False" Visibility="Hidden"/>
+        <TextBox x:Name="TbTfs" Height="23" HorizontalAlignment="Left" Margin="252,16,0,0" VerticalAlignment="Top" Width="253" IsReadOnly="True" IsEnabled="False" Visibility="Hidden"/>
+
+
+        <TreeView x:Name="TvSuites" Height="303" HorizontalAlignment="Left" Margin="252,132,0,0" VerticalAlignment="Top" Width="253" Background="White" BorderBrush="Black" Visibility="Hidden" />
+        <Button x:Name="BtnGenerate" Content="Generate" Height="23" HorizontalAlignment="Left" Margin="520,132,0,0" VerticalAlignment="Top" Width="66" Click="BtnGenerate_Click" Visibility="Hidden"/>
+        <ListBox x:Name="LbSelectTestPlan" HorizontalAlignment="Left" Height="303" Margin="9,132,0,0" VerticalAlignment="Top" Width="237" IsSynchronizedWithCurrentItem="True" SelectionChanged="LbSelectTestPlan_SelectionChanged" Visibility="Hidden"/>
+
+
+        <!-- <Button x:Name="BtnGenerate" Content="Generate" Height="23" HorizontalAlignment="Left" Margin="252,110,0,0" VerticalAlignment="Top" Width="66" Click="BtnGenerate_Click" /> -->
+        <DockPanel LastChildFill="False"  x:Name="Docpanel" Margin="251,132,77,15" Visibility="Hidden">
+            <!-- <ListBox Name="lbUsers"  Width="404" Margin="0,0,0,10"  SelectionChanged="lbUsers_SelectionChanged"  FontFamily="Verdana" FontSize="10"></ListBox> -->
+            <DataGrid  Width="280" BorderBrush="DimGray" IsEnabledChanged="DataGrid_IsEnabledChanged" x:Name="Mygrid" IsEnabled="False"  AutoGenerateColumns="True" HeadersVisibility="None" CanUserDeleteRows="True" GridLinesVisibility="None" SelectedItem="" ItemsSource="{Binding MylistElements}" HorizontalAlignment="Center" Height="303" VerticalAlignment="Center" >
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Address" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Click="Button_Click_Delete"  Style="{DynamicResource SaveButtonStyle}" Content="Delete"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+
+        <Button x:Name="SaveRequirement"  Click="SaveRequirement_Click"  Content="Save" FontWeight="Bold" Margin="532,393,13,31" Visibility="Hidden"/>
+        <Label x:Name="DecisionLabel" Content="Select Action Type" Margin="103,211,0,211" Foreground="White" FontStyle="Italic" FontSize="13" HorizontalAlignment="Left" Width="117" />
+        <ComboBox x:Name="LoadcomboBox" HorizontalAlignment="Left" Margin="388,211,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="LoadcomboBox_Selected"/>
+      
+
+
+    </Grid>
+</Window>
