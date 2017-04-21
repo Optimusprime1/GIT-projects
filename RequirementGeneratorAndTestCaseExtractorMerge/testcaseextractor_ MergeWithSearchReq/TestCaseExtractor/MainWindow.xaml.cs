@@ -10,17 +10,14 @@ using Microsoft.TeamFoundation.TestManagement.Client;
 using Microsoft.TeamFoundation.WorkItemTracking.Client;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using Microsoft.Win32;
 using OpenXmlPowerTools;
-using System.Windows.Forms;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace TestCaseExtractor
 {
-   /// <summary>
-  /// Created at 18.01.2017 By Volkan Sanoglu for Veripark otomatic Requirement Generation from uploaded Documement
-   public class MylistElements 
+    /// <summary>
+    /// Created at 18.01.2017 By Volkan Sanoglu for Veripark otomatic Requirement Generation from uploaded Documement
+    public class MylistElements 
     {
         public string RqName { get; set; }
 
@@ -45,6 +42,8 @@ namespace TestCaseExtractor
         public ObservableCollection<MylistElements> Datagriditems;
         public string  rootsuiteid;
         int  _tvItem;
+        int LoadcomboBoxindex = -1;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -54,6 +53,7 @@ namespace TestCaseExtractor
         {
             LoadcomboBox.Items.Add("Export Test Cases");
             LoadcomboBox.Items.Add("Create Requirements From Analysis");
+            LoadcomboBox.Items.Add("Generate Proof Document");
         }
 
         private void BtnConnectForExcel_Click(object sender, RoutedEventArgs e)
@@ -472,12 +472,28 @@ namespace TestCaseExtractor
 
         private void GetTestSuites(IStaticTestSuite staticTestSuite, ExcelWorksheet worksheet, ExcelPackage xlpackage, ITestManagementTeamProject _testProject)
         {
-            foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
+            if (LoadcomboBoxindex == 2)
             {
-                WriteTestCaseToExcel(suiteEntry.TestCase, worksheet, _testProject);
-                _i++;
+
+                foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
+                {
+                 WriteTestCaseToWord(suiteEntry.TestCase, worksheet, _testProject);
+                    _i++;
+
+                }
 
             }
+            else
+            {
+                foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
+                {
+                    WriteTestCaseToExcel(suiteEntry.TestCase, worksheet, _testProject);
+                    _i++;
+
+                }
+
+            }
+           
 
             foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.StaticTestSuite ||
                                                                                    suiteEntry.EntryType == TestSuiteEntryType.RequirementTestSuite))
@@ -500,6 +516,12 @@ namespace TestCaseExtractor
             }
             xlpackage.Save();
         }
+
+
+        void WriteTestCaseToWord(ITestBase testCase, ExcelWorksheet worksheet, ITestManagementTeamProject _testProject)
+        { }
+
+
 
         public static string StripTagsCharArray(string source)
         {
@@ -580,8 +602,18 @@ namespace TestCaseExtractor
                     _suite = _testProject.TestSuites.Find(Convert.ToInt32(tvItem.Tag.ToString()));
 
 
-                    if (_suite != null)
+                    if (_suite != null && LoadcomboBoxindex==0)
+                    {
+
                         Access_Excel(_suite, _testProject);
+                    }
+
+                    if (_suite != null && LoadcomboBoxindex == 2)
+                    {
+
+                        ExportToWord.Access_word(_suite, _testProject, TbFileNameForExcel.Text);
+                    }
+
                 }
                 else
                 {
@@ -746,9 +778,9 @@ namespace TestCaseExtractor
 
         public void ArrangeVisibilties(int Selectedvalue)
         {
+                LoadcomboBoxindex = Selectedvalue;
 
-
-            if (Selectedvalue == 0)
+            if (Selectedvalue == 0 || Selectedvalue == 2)
             {
                 LoadcomboBox.Visibility = Visibility.Hidden;
                 Label3.Visibility = Visibility.Visible;
