@@ -12,6 +12,9 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using OpenXmlPowerTools;
 using System.Collections.ObjectModel;
+using Novacode;
+using System.Diagnostics;
+
 
 namespace TestCaseExtractor
 {
@@ -189,47 +192,60 @@ namespace TestCaseExtractor
         }
 
 
-        void Access_Excel(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject)
+        void Access_Documents(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject)
         {
-            try
+            if (LoadcomboBoxindex == 2)
             {
-                var newFile = new FileInfo(TbFileNameForExcel.Text);
+            DocX worddoc =ExportToWord.Access_word(rootSuite, _testProject, TbFileNameForExcel.Text);
+                GetTestSuites(rootSuite as IStaticTestSuite, null,null,worddoc, _testProject);
 
-
-                var template = new FileInfo(Directory.GetCurrentDirectory() + "\\Resources\\TestCaseTemplate.xlsx");
-                using (var xlpackage = new ExcelPackage(newFile, template))
-                {
-                    ExcelWorksheet worksheet = xlpackage.Workbook.Worksheets[1];
-                    worksheet.Name = (LbSelectTestPlan.SelectedItem as ITestPlan).RootSuite.Title;
-
-                    worksheet.OutLineSummaryBelow = false;
-                    //xlpackage.Save();
-
-                    WriteRootSuiteToExcel(rootSuite, worksheet);
-                    if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
-                    {
-                        //Bug  is here
-                        GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, _testProject);
-                    }
-                    if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
-                    {
-                        GetTestCases(rootSuite as IRequirementTestSuite, worksheet);
-                        xlpackage.Save();
-                    }
-
-
-
-                    System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
-                }
+                worddoc.InsertTable(4, 4);
+                worddoc.Save();
+                
             }
-            catch (Exception theException)
-            {
-                var errorMessage = "Error: ";
-                errorMessage = String.Concat(errorMessage, theException.Message);
-                errorMessage = String.Concat(errorMessage, " Line: ");
-                errorMessage = String.Concat(errorMessage, theException.Source);
 
-                System.Windows.MessageBox.Show(errorMessage, "Error");
+                    if (LoadcomboBoxindex == 0)
+            { 
+
+                        try
+                            {
+                             var newFile = new FileInfo(TbFileNameForExcel.Text);
+
+
+                              var template = new FileInfo(Directory.GetCurrentDirectory() + "\\Resources\\TestCaseTemplate.xlsx");
+                              using (var xlpackage = new ExcelPackage(newFile, template))
+                                {
+                                ExcelWorksheet worksheet = xlpackage.Workbook.Worksheets[1];
+                                worksheet.Name = (LbSelectTestPlan.SelectedItem as ITestPlan).RootSuite.Title;
+
+                                worksheet.OutLineSummaryBelow = false;
+                                //xlpackage.Save();
+
+                                WriteRootSuiteToExcel(rootSuite, worksheet);
+                                if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
+                                    {
+                                 //Bug  is here
+                                  GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null,_testProject); 
+                                    }       
+
+                                 if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
+                                 {
+                                 GetTestCases(rootSuite as IRequirementTestSuite, worksheet , null);
+                                 xlpackage.Save();
+                                 }
+
+                                 System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
+                                 }
+                                    }
+                      catch (Exception theException)
+                     {
+                        var errorMessage = "Error: ";
+                        errorMessage = String.Concat(errorMessage, theException.Message);
+                        errorMessage = String.Concat(errorMessage, " Line: ");
+                        errorMessage = String.Concat(errorMessage, theException.Source);
+                        System.Windows.MessageBox.Show(errorMessage, "Error");
+                     }
+
             }
         }
 
@@ -274,9 +290,10 @@ namespace TestCaseExtractor
 
         }
 
-        void WriteTestCaseToExcel(ITestBase testCase, ExcelWorksheet worksheet, ITestManagementTeamProject _testProject)
+        void WriteTestCases(ITestBase testCase, ExcelWorksheet worksheet, DocX worddoc, ITestManagementTeamProject _testProject)
         {
 
+      
             worksheet.Cells[_i, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
             worksheet.Cells[_i, 1].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             worksheet.Cells[_i, 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -459,41 +476,28 @@ namespace TestCaseExtractor
             worksheet.Row(i + j).OutlineLevel = 2;
         }
 
-        private void GetTestCases(IRequirementTestSuite requirementTestSuite, ExcelWorksheet worksheet)
+        private void GetTestCases(IRequirementTestSuite requirementTestSuite, ExcelWorksheet worksheet, DocX worddoc)
         {
             WriteSuiteToExcel(requirementTestSuite, worksheet);
             _i++;
             foreach (var testCase in requirementTestSuite.AllTestCases)
             {
-                WriteTestCaseToExcel(testCase, worksheet, _testProject);
+                WriteTestCases(testCase, worksheet, worddoc, _testProject);
                 _i++;
             }
         }
 
-        private void GetTestSuites(IStaticTestSuite staticTestSuite, ExcelWorksheet worksheet, ExcelPackage xlpackage, ITestManagementTeamProject _testProject)
+        private void GetTestSuites(IStaticTestSuite staticTestSuite, ExcelWorksheet worksheet, ExcelPackage xlpackage, DocX worddoc, ITestManagementTeamProject _testProject)
         {
-            if (LoadcomboBoxindex == 2)
-            {
 
+         
                 foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
-                {
-                 WriteTestCaseToWord(suiteEntry.TestCase, worksheet, _testProject);
+               {
+                    WriteTestCases(suiteEntry.TestCase, worksheet, worddoc,_testProject);
                     _i++;
 
                 }
 
-            }
-            else
-            {
-                foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
-                {
-                    WriteTestCaseToExcel(suiteEntry.TestCase, worksheet, _testProject);
-                    _i++;
-
-                }
-
-            }
-           
 
             foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.StaticTestSuite ||
                                                                                    suiteEntry.EntryType == TestSuiteEntryType.RequirementTestSuite))
@@ -505,21 +509,23 @@ namespace TestCaseExtractor
                     _i++;
                     if (suite.Entries.Count > 0)
                     {
-                        GetTestSuites(suite, worksheet, xlpackage, _testProject);
+                        GetTestSuites(suite, worksheet, xlpackage, null,_testProject);
                     }
                 }
                 else
                 {
                     var suite = suiteEntry.TestSuite as IRequirementTestSuite;
-                    GetTestCases(suite, worksheet);
+                    GetTestCases(suite, worksheet, worddoc);
                 }
             }
             xlpackage.Save();
+
+            
         }
 
 
-        void WriteTestCaseToWord(ITestBase testCase, ExcelWorksheet worksheet, ITestManagementTeamProject _testProject)
-        { }
+
+
 
 
 
@@ -602,16 +608,10 @@ namespace TestCaseExtractor
                     _suite = _testProject.TestSuites.Find(Convert.ToInt32(tvItem.Tag.ToString()));
 
 
-                    if (_suite != null && LoadcomboBoxindex==0)
+                    if (_suite != null)
                     {
 
-                        Access_Excel(_suite, _testProject);
-                    }
-
-                    if (_suite != null && LoadcomboBoxindex == 2)
-                    {
-
-                        ExportToWord.Access_word(_suite, _testProject, TbFileNameForExcel.Text);
+                        Access_Documents(_suite, _testProject);
                     }
 
                 }
