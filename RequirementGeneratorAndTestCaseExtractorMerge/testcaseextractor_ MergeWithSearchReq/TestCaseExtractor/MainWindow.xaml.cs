@@ -46,6 +46,7 @@ namespace TestCaseExtractor
         public string  rootsuiteid;
         int  _tvItem;
         int LoadcomboBoxindex = -1;
+        string absolutepath = null;
 
         public MainWindow()
         {
@@ -416,13 +417,31 @@ namespace TestCaseExtractor
             var j = 1;
 
 
-            /* For download code
+          
             var wi = Store.GetWorkItem(testCase.Id);
-            string name =null;
+            
+            
             Attachment attach = null;
-            attach = wi.Attachments.Cast<Attachment>().FirstOrDefault(x => x.Name == name);
+            attach = wi.Attachments.Cast<Attachment>().FirstOrDefault();
 
-            */
+            if (attach != null)
+            {
+                //return System.IO.File.OpenRead(attach.Uri.ToString());
+                // System.Net.WebClient request = new System.Net.WebClient();
+                // request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                //request.OpenRead(attach.Uri);
+                // request.DownloadFile(attach.Uri, "firstscreen" ,);
+                // Console.WriteLine(System.AppDomain.CurrentDomain.BaseDirectory);
+                string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + attach.Name;
+                using (System.Net.WebClient request = new System.Net.WebClient())
+                {
+                    request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                    request.DownloadFile(attach.Uri, localFilename);
+                }
+
+            }
+
+
 
 
             foreach (ITestAction action in testCase.Actions)
@@ -567,6 +586,7 @@ namespace TestCaseExtractor
                     InitialDirectory = Environment.SpecialFolder.MyDocuments.ToString(),
                     Filter = Properties.Resources.MainWindow_BtnOpenFileDialog_Click,
                     FilterIndex = 1
+                    
                 };
 
                 saveFileDialog1.FileName = GetTestPlanName(LbSelectTestPlan.SelectedItem as ITestPlan);
@@ -574,6 +594,9 @@ namespace TestCaseExtractor
                 if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     TbFileNameForExcel.Text = saveFileDialog1.FileName;
+                    string mypath =Path.GetFullPath(saveFileDialog1.FileName);
+                    absolutepath = System.IO.Path.GetDirectoryName(mypath);
+
                 }
                 else
                 {
@@ -582,6 +605,7 @@ namespace TestCaseExtractor
             }
             else { System.Windows.MessageBox.Show("Please choose a Test suite"); }
 
+            
         }
 
         private void BtnGenerate_Click(object sender, RoutedEventArgs e)
@@ -595,9 +619,9 @@ namespace TestCaseExtractor
             else
             {
 
-             //   string subPath = null;
-               // subPath = @"C:\Users\vsanoglu\Desktop\Projects\Barclays\testevidances";// your code goes here
-                //  System.IO.Directory.CreateDirectory(subPath);
+               //string subPath = null;
+               // subPath = @TbFileNameForExcel.Text;// your code goes here
+                 System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName);
 
 
                 _i = 3;
