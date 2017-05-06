@@ -210,6 +210,9 @@ namespace TestCaseExtractor
 
                         try
                             {
+
+                             TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + TbFileNameForExcel.Text;
+
                              var newFile = new FileInfo(TbFileNameForExcel.Text);
 
 
@@ -315,6 +318,12 @@ namespace TestCaseExtractor
             worksheet.Cells[_i, 8].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             worksheet.Cells[_i, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
             worksheet.Cells[_i, 9].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+            worksheet.Cells[_i, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            worksheet.Cells[_i, 10].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+            worksheet.Cells[_i, 11].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            worksheet.Cells[_i, 11].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+            worksheet.Cells[_i, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            worksheet.Cells[_i, 12].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             worksheet.Cells[_i, 5].Style.Font.Bold = true;
             worksheet.Cells[_i, 9].Style.Font.Bold = true;
             //worksheet.Cells[_i, 5].Style.Font.Bold = true;
@@ -419,26 +428,47 @@ namespace TestCaseExtractor
 
           
             var wi = Store.GetWorkItem(testCase.Id);
-            
-            
-            Attachment attach = null;
-            attach = wi.Attachments.Cast<Attachment>().FirstOrDefault();
+                 
 
+
+            
+            Attachment[] attach = wi.Attachments.Cast<Attachment>().ToArray();
+           
             if (attach != null)
             {
-                //return System.IO.File.OpenRead(attach.Uri.ToString());
-                // System.Net.WebClient request = new System.Net.WebClient();
-                // request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                //request.OpenRead(attach.Uri);
-                // request.DownloadFile(attach.Uri, "firstscreen" ,);
-                // Console.WriteLine(System.AppDomain.CurrentDomain.BaseDirectory);
-                string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + attach.Name;
-                using (System.Net.WebClient request = new System.Net.WebClient())
+                int i = -1;
+                foreach (var attachs in attach)
                 {
-                    request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                    request.DownloadFile(attach.Uri, localFilename);
-                }
+                    i++;
+                    string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + attachs.Name;
+                    if (!System.IO.File.Exists(@localFilename))
+                    {
+                        System.Uri uri = new System.Uri(localFilename);
+                        using (System.Net.WebClient request = new System.Net.WebClient())
+                        {
+                            request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                            request.DownloadFile(attachs.Uri, localFilename);
+                        }
+                        worksheet.Cells[_i, 10 + i].Hyperlink = uri;
 
+                    }
+
+                    else {
+                        
+                        using (System.Net.WebClient request = new System.Net.WebClient())
+                        {
+                            request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                            localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + i+ attachs.Name ;
+                            request.DownloadFile(attachs.Uri, localFilename);
+
+                        }
+                        System.Uri uri = new System.Uri(localFilename);
+                        worksheet.Cells[_i, 10 + i].Hyperlink = uri;
+                    }
+
+                }
+                
+                
             }
 
 
@@ -589,13 +619,21 @@ namespace TestCaseExtractor
                     
                 };
 
-                saveFileDialog1.FileName = GetTestPlanName(LbSelectTestPlan.SelectedItem as ITestPlan);
+              //  myString.Replace(';', '\n').Replace(',', '\n').Replace('\r', '\n').Replace('\t', '\n').Replace(' ', '\n').Replace("\n\n", "\n");
+                saveFileDialog1.FileName = GetTestPlanName(LbSelectTestPlan.SelectedItem as ITestPlan).Replace(':', ' ').Replace ('*' , ' ').Replace( '/',' ');
+
+               // saveFileDialog1.FileName = test_plan_name.Trim(charsToTrim);
 
                 if (saveFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    TbFileNameForExcel.Text = saveFileDialog1.FileName;
+                    TbFileNameForExcel.Text= saveFileDialog1.FileName;
+
                     string mypath =Path.GetFullPath(saveFileDialog1.FileName);
                     absolutepath = System.IO.Path.GetDirectoryName(mypath);
+                    int index = mypath.IndexOf(absolutepath) ;
+                    
+                    string UpdatedExcelFileName = mypath.Substring(absolutepath.Length+1);
+                    TbFileNameForExcel.Text = UpdatedExcelFileName;
 
                 }
                 else
@@ -619,8 +657,9 @@ namespace TestCaseExtractor
             else
             {
 
-               //string subPath = null;
-               // subPath = @TbFileNameForExcel.Text;// your code goes here
+                //string subPath = null;
+                // subPath = @TbFileNameForExcel.Text;// your code goes here
+                
                  System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName);
 
 
