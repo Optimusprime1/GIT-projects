@@ -359,14 +359,18 @@ namespace TestCaseExtractor
 
             }
 
-            
 
-             WorkItemCollection BugQueryResults = Store.Query(
+
+            WorkItemCollection BugQueryResults = Store.Query(
+            "SELECT [System.Id],[Microsoft.VSTS.Common.StackRank],[Microsoft.VSTS.Common.Priority], [System.WorkItemType],[System.Title] " +
+            "From WorkItems " +
+            "Where [System.TeamProject] = '" + _testProject.WitProject.Name + "'" + "AND ([System.WorkItemType] = 'Bug' ) AND  [System.IterationPath] = '" + testCase.WorkItem.IterationPath + "' AND[System.State] <> 'Closed'");
+
+
+            WorkItemCollection RequirementQueryResults = Store.Query(
              "SELECT [System.Id],[Microsoft.VSTS.Common.StackRank],[Microsoft.VSTS.Common.Priority], [System.WorkItemType],[System.Title] " +
              "From WorkItems " +
-             "Where [System.TeamProject] = '" + _testProject.WitProject.Name + "'" + "AND ([System.WorkItemType] = 'Bug' OR [System.WorkItemType] = 'Requirement' ) AND  [System.IterationPath] = '" + testCase.WorkItem.IterationPath + "' AND[System.State] <> 'Closed'");
-             
-
+             "Where [System.TeamProject] = '" + _testProject.WitProject.Name + "'" + "AND ([System.WorkItemType] = 'Requirement' ) AND  [System.IterationPath] = '" + testCase.WorkItem.IterationPath + "' AND[System.State] <> 'ANY'");
 
 
             /*
@@ -384,8 +388,7 @@ namespace TestCaseExtractor
             WorkItem myitem = testCase.WorkItem;
 
             string _lastvalue = null;
-
-
+       
             foreach (WorkItemLink wil in myitem.WorkItemLinks)
             {
 
@@ -399,7 +402,13 @@ namespace TestCaseExtractor
                         }
 
                     }
-                    else if (disp.Type.Name == "Requirement")
+
+                }
+
+
+                foreach (WorkItem disp in RequirementQueryResults)
+                {
+                    if (disp.Type.Name == "Requirement")
                     {
                         if (disp.Id == wil.TargetId)
                         {
@@ -409,11 +418,12 @@ namespace TestCaseExtractor
 
                     }
 
-
                 }
+
 
             }
 
+            
 
             worksheet.Cells[_i, 6].Value = _lastvalue;
             worksheet.Cells[_i, 9].Value = testCase.Priority;
@@ -436,47 +446,46 @@ namespace TestCaseExtractor
            
             if (attach != null)
             {
+
                 int i = -1;
-                foreach (var attachs in attach)
-                {
-                    i++;
-                    string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + attachs.Name;
-                    
-                    if (!System.IO.File.Exists(@localFilename))
+                using (System.Net.WebClient request = new System.Net.WebClient())
+
+                    foreach (var attachs in attach)
                     {
-                       System.Uri uri = new System.Uri(localFilename);
-                       System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
-                        
-                        using (System.Net.WebClient request = new System.Net.WebClient())
-                        {
-                            request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                            request.DownloadFile(attachs.Uri, localFilename);
-                        }
-                        worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
-                        worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
-                       
+                        i++;
+                        string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + attachs.Name;
 
-                    }
-
-                    else {
-                        
-                        using (System.Net.WebClient request = new System.Net.WebClient())
+                        if (!System.IO.File.Exists(@localFilename))
                         {
-                            request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                            localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + i + attachs.Name ;
-                            System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
-                            request.DownloadFile(attachs.Uri, localFilename);
                             System.Uri uri = new System.Uri(localFilename);
+                            System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
+
+
+                            {
+                                request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                                request.DownloadFile(attachs.Uri, localFilename);
+                            }
                             worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
                             worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
                         }
-                       
-                      
-                    }
 
-                }
-                
-                
+                        else
+                        {
+
+                            {
+                                request.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                                localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + i + attachs.Name;
+                                System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
+                                request.DownloadFile(attachs.Uri, localFilename);
+                                System.Uri uri = new System.Uri(localFilename);
+                                worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
+                                worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
+                            }
+
+                        }
+
+                    }
+                             
             }
 
 
