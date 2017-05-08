@@ -440,16 +440,21 @@ namespace TestCaseExtractor
                 foreach (var attachs in attach)
                 {
                     i++;
-                    string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + attachs.Name;
+                    string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + attachs.Name;
+                    
                     if (!System.IO.File.Exists(@localFilename))
                     {
-                        System.Uri uri = new System.Uri(localFilename);
+                       System.Uri uri = new System.Uri(localFilename);
+                       System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
+                        
                         using (System.Net.WebClient request = new System.Net.WebClient())
                         {
                             request.Credentials = System.Net.CredentialCache.DefaultCredentials;
                             request.DownloadFile(attachs.Uri, localFilename);
                         }
-                        worksheet.Cells[_i, 10 + i].Hyperlink = uri;
+                        worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
+                        worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
+                       
 
                     }
 
@@ -458,12 +463,15 @@ namespace TestCaseExtractor
                         using (System.Net.WebClient request = new System.Net.WebClient())
                         {
                             request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                            localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + i+ attachs.Name ;
+                            localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + i + attachs.Name ;
+                            System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
                             request.DownloadFile(attachs.Uri, localFilename);
-
+                            System.Uri uri = new System.Uri(localFilename);
+                            worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
+                            worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
                         }
-                        System.Uri uri = new System.Uri(localFilename);
-                        worksheet.Cells[_i, 10 + i].Hyperlink = uri;
+                       
+                      
                     }
 
                 }
