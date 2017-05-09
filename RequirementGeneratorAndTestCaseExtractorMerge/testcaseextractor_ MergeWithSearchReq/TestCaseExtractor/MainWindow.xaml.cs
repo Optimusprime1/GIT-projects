@@ -318,12 +318,6 @@ namespace TestCaseExtractor
             worksheet.Cells[_i, 8].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             worksheet.Cells[_i, 9].Style.Fill.PatternType = ExcelFillStyle.Solid;
             worksheet.Cells[_i, 9].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-            worksheet.Cells[_i, 10].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[_i, 10].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-            worksheet.Cells[_i, 11].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[_i, 11].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
-            worksheet.Cells[_i, 12].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[_i, 12].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
             worksheet.Cells[_i, 5].Style.Font.Bold = true;
             worksheet.Cells[_i, 9].Style.Font.Bold = true;
             //worksheet.Cells[_i, 5].Style.Font.Bold = true;
@@ -470,8 +464,11 @@ namespace TestCaseExtractor
                                 request.Credentials = System.Net.CredentialCache.DefaultCredentials;
                                 request.DownloadFile(attachs.Uri, localFilename);
                             }
-                            worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
-                            worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
+                                worksheet.Cells[_i, 10 + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                worksheet.Cells[_i, 10 + i].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
+                                worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
+
                         }
 
                         else
@@ -483,8 +480,10 @@ namespace TestCaseExtractor
                                 System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
                                 request.DownloadFile(attachs.Uri, localFilename);
                                 System.Uri uri = new System.Uri(localFilename);
-                                worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
-                                worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
+                                    worksheet.Cells[_i, 10 + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    worksheet.Cells[_i, 10 + i].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                    worksheet.Cells[_i, 10 + i].Hyperlink = uriForRelativeExcel.MakeRelativeUri(uri);
+                                    worksheet.Cells[_i, 10 + i].Value = testCase.Id + "-" + attachs.Name;
                             }
 
                         }
