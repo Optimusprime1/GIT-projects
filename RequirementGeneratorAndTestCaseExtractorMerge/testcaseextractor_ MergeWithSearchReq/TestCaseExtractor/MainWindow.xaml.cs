@@ -444,7 +444,7 @@ namespace TestCaseExtractor
             
             Attachment[] attach = wi.Attachments.Cast<Attachment>().ToArray();
            
-            if (attach != null)
+            if (attach != null) 
             {
 
                 int i = -1;
@@ -452,6 +452,11 @@ namespace TestCaseExtractor
 
                     foreach (var attachs in attach)
                     {
+
+                        if (attachs.Extension == ".jpg" || attachs.Extension == ".png")
+
+                        { 
+
                         i++;
                         string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + attachs.Name;
 
@@ -483,8 +488,8 @@ namespace TestCaseExtractor
                             }
 
                         }
-
-                    }
+                      }
+                 }
                              
             }
 
