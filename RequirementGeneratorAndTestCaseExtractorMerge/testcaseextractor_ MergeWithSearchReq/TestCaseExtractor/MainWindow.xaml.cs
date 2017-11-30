@@ -14,7 +14,7 @@ using OpenXmlPowerTools;
 using System.Collections.ObjectModel;
 using Novacode;
 using System.Diagnostics;
-
+using System.Threading.Tasks;
 
 namespace TestCaseExtractor
 {
@@ -48,6 +48,7 @@ namespace TestCaseExtractor
         int LoadcomboBoxindex = -1;
         string absolutepath = null;
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -57,7 +58,7 @@ namespace TestCaseExtractor
         {
             LoadcomboBox.Items.Add("Export Test Cases");
             LoadcomboBox.Items.Add("Create Requirements From Analysis");
-            LoadcomboBox.Items.Add("Generate Proof Document");
+          //  LoadcomboBox.Items.Add("Generate Proof Document");
         }
 
         private void BtnConnectForExcel_Click(object sender, RoutedEventArgs e)
@@ -193,7 +194,7 @@ namespace TestCaseExtractor
         }
 
 
-        void Access_Documents(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject)
+        void Access_Documents(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject,string multifilename)
         {
             if (LoadcomboBoxindex == 2)
             {
@@ -205,52 +206,106 @@ namespace TestCaseExtractor
                 
             }
 
-                    if (LoadcomboBoxindex == 0)
-            { 
+            var tvItem = TvSuites.SelectedItem as TreeViewItem;
 
-                        try
-                            {
-
-                             TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + TbFileNameForExcel.Text;
-
-                             var newFile = new FileInfo(TbFileNameForExcel.Text);
+            if (LoadcomboBoxindex == 0 && tvItem.Items.Count == 0)
+            {
 
 
-                              var template = new FileInfo(Directory.GetCurrentDirectory() + "\\Resources\\TestCaseTemplate.xlsx");
-                              using (var xlpackage = new ExcelPackage(newFile, template))
-                                {
-                                ExcelWorksheet worksheet = xlpackage.Workbook.Worksheets[1];
-                                worksheet.Name = (LbSelectTestPlan.SelectedItem as ITestPlan).RootSuite.Title;
 
-                                worksheet.OutLineSummaryBelow = false;
-                                //xlpackage.Save();
+                try
+                {
 
-                                WriteRootSuiteToExcel(rootSuite, worksheet);
-                                if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
-                                    {
-                                 //Bug  is here
-                                  GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null,_testProject); 
-                                    }       
+                    TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + TbFileNameForExcel.Text;
 
-                                 if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
-                                 {
-                                 GetTestCases(rootSuite as IRequirementTestSuite, worksheet , null);
-                                 xlpackage.Save();
-                                 }
+                    var newFile = new FileInfo(TbFileNameForExcel.Text);
 
-                                 System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
-                                 }
-                                    }
-                      catch (Exception theException)
-                     {
-                        var errorMessage = "Error: ";
-                        errorMessage = String.Concat(errorMessage, theException.Message);
-                        errorMessage = String.Concat(errorMessage, " Line: ");
-                        errorMessage = String.Concat(errorMessage, theException.Source);
-                        System.Windows.MessageBox.Show(errorMessage, "Error");
-                     }
+
+                    var template = new FileInfo(Directory.GetCurrentDirectory() + "\\Resources\\TestCaseTemplate.xlsx");
+                    using (var xlpackage = new ExcelPackage(newFile, template))
+                    {
+                        ExcelWorksheet worksheet = xlpackage.Workbook.Worksheets[1];
+                        worksheet.Name = (LbSelectTestPlan.SelectedItem as ITestPlan).RootSuite.Title;
+
+                        worksheet.OutLineSummaryBelow = false;
+                        //xlpackage.Save();
+
+                        WriteRootSuiteToExcel(rootSuite, worksheet);
+                        if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
+                        {
+                            //Bug  is here
+                            GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null, _testProject);
+                        }
+
+                        if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
+                        {
+                            GetTestCases(rootSuite as IRequirementTestSuite, worksheet, null);
+                            xlpackage.Save();
+                        }
+
+                        System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
+                    }
+                }
+                catch (Exception theException)
+                {
+                    var errorMessage = "Error: ";
+                    errorMessage = String.Concat(errorMessage, theException.Message);
+                    errorMessage = String.Concat(errorMessage, " Line: ");
+                    errorMessage = String.Concat(errorMessage, theException.Source);
+                    System.Windows.MessageBox.Show(errorMessage, "Error");
+                }
 
             }
+
+
+            else {
+
+                try
+                {
+
+                    TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + multifilename + ".xlsx";
+
+                    var newFile = new FileInfo(TbFileNameForExcel.Text);
+
+
+                    var template = new FileInfo(Directory.GetCurrentDirectory() + "\\Resources\\TestCaseTemplate.xlsx");
+                    using (var xlpackage = new ExcelPackage(newFile, template))
+                    {
+                        ExcelWorksheet worksheet = xlpackage.Workbook.Worksheets[1];
+                        worksheet.Name = multifilename;
+
+                        worksheet.OutLineSummaryBelow = false;
+                        //xlpackage.Save();
+
+                        WriteRootSuiteToExcel(rootSuite, worksheet);
+                        if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
+                        {
+                            //Bug  is here
+                            GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null, _testProject);
+                        }
+
+                        if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
+                        {
+                            GetTestCases(rootSuite as IRequirementTestSuite, worksheet, null);
+                            xlpackage.Save();
+                        }
+
+                      //  System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
+                    }
+                }
+                catch (Exception theException)
+                {
+                    var errorMessage = "Error: ";
+                    errorMessage = String.Concat(errorMessage, theException.Message);
+                    errorMessage = String.Concat(errorMessage, " Line: ");
+                    errorMessage = String.Concat(errorMessage, theException.Source);
+                    System.Windows.MessageBox.Show(errorMessage, "Error");
+                }
+
+
+
+            }
+
         }
 
         void WriteRootSuiteToExcel(ITestSuiteBase testSuite, ExcelWorksheet worksheet)
@@ -629,8 +684,14 @@ namespace TestCaseExtractor
         private void BtnOpenFileDialogForExcel_Click(object sender, RoutedEventArgs e)
         {
 
+            var tvItem = TvSuites.SelectedItem as TreeViewItem;
+
+            if (tvItem.Items.Count > 1) { }
+
             if (TvSuites.SelectedValue != null)
             {
+                if (tvItem.Items.Count > 1) { }
+
 
                 var saveFileDialog1 = new System.Windows.Forms.SaveFileDialog
                 {
@@ -662,6 +723,7 @@ namespace TestCaseExtractor
                     System.Windows.MessageBox.Show("Please choose a valid filename");
                 }
             }
+
             else { System.Windows.MessageBox.Show("Please choose a Test suite"); }
 
             
@@ -669,7 +731,7 @@ namespace TestCaseExtractor
 
         private void BtnGenerate_Click(object sender, RoutedEventArgs e)
         {
-           
+
 
             if (TbFileNameForExcel.Text == null || TbFileNameForExcel.Text.Length.Equals(0))
             {
@@ -680,36 +742,79 @@ namespace TestCaseExtractor
 
                 //string subPath = null;
                 // subPath = @TbFileNameForExcel.Text;// your code goes here
-                
-                 System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName);
+
+                System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName);
 
 
                 _i = 3;
+
+
+
+
                 if (TvSuites.SelectedValue != null)
                 {
                     var tvItem = TvSuites.SelectedItem as TreeViewItem;
 
-                    _suite = _testProject.TestSuites.Find(Convert.ToInt32(tvItem.Tag.ToString()));
 
-
-                    if (_suite != null)
+                    if (tvItem.Items.Count == 0)
                     {
 
-                        Access_Documents(_suite, _testProject);
+                        _suite = _testProject.TestSuites.Find(Convert.ToInt32(tvItem.Tag));
+
+                        if (_suite != null)
+                        {
+
+                            Access_Documents(_suite, _testProject, TbFileNameForExcel.Text);
+                        }
+
                     }
 
+
+                    else if (tvItem.Items.Count > 1)
+                    {
+                        List<TreeViewItem> expandedTVI = new List<TreeViewItem>();
+                        foreach (TreeViewItem item in tvItem.Items)
+                        {
+                            expandedTVI.Add(item);
+                        }
+
+                        
+                        /*
+                        foreach (TreeViewItem collectiontest in expandedTVI) {
+                            collectiontest.h
+                        } 
+                        */
+                        
+                        Parallel.ForEach(expandedTVI, (allitems) =>
+                       {
+                           
+                           this.Dispatcher.BeginInvoke(new Action(() =>
+                           
+                           Access_Documents(_testProject.TestSuites.Find(Convert.ToInt32(allitems.Tag)), _testProject, allitems.Header.ToString())), null);
+
+
+
+
+                           System.Threading.Thread.Sleep(2);
+                       });
+
+                        System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
+
+                    }
+
+
+                    else
+                    {
+                        System.Windows.MessageBox.Show("Please select a test suite");
+                    }
+
+
                 }
-                else
-                {
-                    System.Windows.MessageBox.Show("Please select a test suite");
-                }
+
+
             }
+
         }
-
-
-
-
-
 
         ///Below part is for Requirements generation
         ///
