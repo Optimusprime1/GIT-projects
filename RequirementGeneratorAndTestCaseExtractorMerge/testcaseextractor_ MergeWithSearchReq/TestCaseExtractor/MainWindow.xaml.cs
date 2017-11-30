@@ -502,7 +502,7 @@ namespace TestCaseExtractor
                     foreach (var attachs in attach)
                     {
 
-                        if (attachs.Extension == ".jpg" || attachs.Extension == ".png")
+                        if (attachs.Extension.ToLower() == ".jpg" || attachs.Extension.ToLower() == ".png")
 
                         { 
 
