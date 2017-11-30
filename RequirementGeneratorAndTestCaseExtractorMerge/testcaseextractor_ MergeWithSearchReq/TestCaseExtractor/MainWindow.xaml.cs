@@ -243,7 +243,7 @@ namespace TestCaseExtractor
                             xlpackage.Save();
                         }
 
-                        System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
+                        System.Windows.MessageBox.Show("File" + TbFileNameForExcel.Text + "has been saved to desktop");
                     }
                 }
                 catch (Exception theException)
@@ -507,7 +507,7 @@ namespace TestCaseExtractor
                         { 
 
                         i++;
-                        string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + attachs.Name;
+                        string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id  + "-"  + attachs.Name;
 
                         if (!System.IO.File.Exists(@localFilename))
                         {
@@ -614,9 +614,9 @@ namespace TestCaseExtractor
 
         private void GetTestSuites(IStaticTestSuite staticTestSuite, ExcelWorksheet worksheet, ExcelPackage xlpackage, DocX worddoc, ITestManagementTeamProject _testProject)
         {
+            _i = 3;
 
-         
-                foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
+            foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
                {
                     WriteTestCases(suiteEntry.TestCase, worksheet, worddoc,_testProject);
                     _i++;
