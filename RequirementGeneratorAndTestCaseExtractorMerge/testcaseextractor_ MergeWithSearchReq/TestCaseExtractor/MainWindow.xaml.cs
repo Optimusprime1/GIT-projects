@@ -243,7 +243,7 @@ namespace TestCaseExtractor
                             xlpackage.Save();
                         }
 
-                        System.Windows.MessageBox.Show("File" + TbFileNameForExcel.Text + "has been saved to desktop");
+                        System.Windows.MessageBox.Show("File" + TbFileNameForExcel.Text + " " +  "has been saved to desktop");
                     }
                 }
                 catch (Exception theException)
@@ -798,7 +798,7 @@ namespace TestCaseExtractor
                            System.Threading.Thread.Sleep(2);
                        });
 
-                        System.Windows.MessageBox.Show("File has been saved at " + TbFileNameForExcel.Text);
+                        System.Windows.MessageBox.Show("File" + TbFileNameForExcel.Text + " " + "has been saved to desktop");
 
                     }
 
