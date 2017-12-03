@@ -216,7 +216,8 @@ namespace TestCaseExtractor
                 try
                 {
 
-                    TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + TbFileNameForExcel.Text;
+                    System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader);
+                    TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\" + allitemsHeader + ".xlsx";
 
                     var newFile = new FileInfo(TbFileNameForExcel.Text);
 
@@ -534,7 +535,7 @@ namespace TestCaseExtractor
 
                             {
                                 request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                                localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\" + testCase.Id + "-" + attachs.Name;
+                                localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\" + testCase.Id + +i+ "-" + attachs.Name;
                                 System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\");
                                 request.DownloadFile(attachs.Uri, localFilename);
                                 System.Uri uri = new System.Uri(localFilename);
@@ -769,7 +770,7 @@ namespace TestCaseExtractor
                         if (_suite != null)
                         {
 
-                            Access_Documents(_suite, _testProject, TbFileNameForExcel.Text);
+                            Access_Documents(_suite, _testProject, tvItem.Header.ToString());
                         }
 
                     }

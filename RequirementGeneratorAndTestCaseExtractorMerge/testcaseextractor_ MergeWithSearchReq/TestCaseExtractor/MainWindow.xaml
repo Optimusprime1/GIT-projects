@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         x:Name="WinMainWindow" x:Class="TestCaseExtractor.MainWindow"
-        Title="Welcome Quality Assurance Automatizon Tool-Veripark" Height="475" Width="615" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Quality Assurance Automatizon Tool-Veripark" Height="475" Width="615" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="Icon.ico" Topmost="True">
     <Window.Resources>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
@@ -71,6 +71,10 @@
         </Style>
     </Window.Resources>
     <Grid  Height="450" Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="25*"/>
+        </Grid.ColumnDefinitions>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="Black" Offset="0.0" />
@@ -79,25 +83,25 @@
             </LinearGradientBrush>
         </Grid.Background>
 
-        <Button x:Name="BtnConnect" Content="..." Height="23" HorizontalAlignment="Left" Margin="520,16,0,0" VerticalAlignment="Top" Width="23" Click="BtnConnect_Click" Visibility="Hidden"/>
-        <Button x:Name="BtnConnectForExcel" Content="..." Height="23" HorizontalAlignment="Left" Margin="520,16,0,0" VerticalAlignment="Top" Width="23" Click="BtnConnectForExcel_Click"  Visibility="Hidden"/>
-        <Label x:Name="Label1" Content="Connect to Team Foundation Server" Height="28" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Foreground="AliceBlue" FontStyle="Italic" FontSize="13" Width="220" Visibility="Hidden" />
-        <Label x:Name="Label2" Content="Upload Requirement Document" Height="28" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" FontSize="13" FontStyle="Italic" Foreground="AliceBlue" Visibility="Hidden"/>
-        <Label x:Name="Label3" Content="Specify the path for new Excel Workbook" Height="28" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" FontSize="13" FontStyle="Italic" Foreground="AliceBlue" Visibility="Hidden"/>
-        <Button x:Name="BtnOpenFileDialog" Content="..." Height="23" Margin="0,60,66,0" VerticalAlignment="Top" Click="BtnOpenFileDialog_Click" Width="23" HorizontalAlignment="Right" Visibility="Hidden"/>
-        <Button x:Name="BtnOpenFileDialogForExcel" Content="..." Height="23" Margin="0,60,66,0" VerticalAlignment="Top" Click="BtnOpenFileDialogForExcel_Click" Width="23" HorizontalAlignment="Right" Visibility="Hidden"/>
-        <TextBox x:Name="TbFileName" Height="23" Margin="252,61,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="253" IsEnabled="False"  Visibility="Hidden"/>
-        <TextBox x:Name="TbFileNameForExcel" Height="23" HorizontalAlignment="Left" Margin="252,61,0,0" VerticalAlignment="Top" Width="253" IsReadOnly="True" IsEnabled="False" Visibility="Hidden"/>
-        <TextBox x:Name="TbTfs" Height="23" HorizontalAlignment="Left" Margin="252,16,0,0" VerticalAlignment="Top" Width="253" IsReadOnly="True" IsEnabled="False" Visibility="Hidden"/>
+        <Button x:Name="BtnConnect" Content="..." Height="23" HorizontalAlignment="Left" Margin="435.902,16,0,0" VerticalAlignment="Top" Width="23" Click="BtnConnect_Click" Visibility="Hidden" Grid.Column="1"/>
+        <Button x:Name="BtnConnectForExcel" Content="..." Height="23" HorizontalAlignment="Left" Margin="435.902,16,0,0" VerticalAlignment="Top" Width="23" Click="BtnConnectForExcel_Click"  Visibility="Hidden" Grid.Column="1"/>
+        <Label x:Name="Label1" Content="Connect to Team Foundation Server" Height="28" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" Foreground="AliceBlue" FontStyle="Italic" FontSize="13" Width="220" Visibility="Hidden" Grid.ColumnSpan="2" />
+        <Label x:Name="Label2" Content="Upload Requirement Document" Height="28" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" FontSize="13" FontStyle="Italic" Foreground="AliceBlue" Visibility="Hidden" Grid.ColumnSpan="2"/>
+        <Label x:Name="Label3" Content="Specify the path for new Excel Workbook" Height="28" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" FontSize="13" FontStyle="Italic" Foreground="AliceBlue" Visibility="Hidden" Grid.ColumnSpan="2"/>
+        <Button x:Name="BtnOpenFileDialog" Content="..." Height="23" Margin="0,60,66,0" VerticalAlignment="Top" Click="BtnOpenFileDialog_Click" Width="23" HorizontalAlignment="Right" Visibility="Hidden" Grid.Column="1"/>
+        <Button x:Name="BtnOpenFileDialogForExcel" Content="..." Height="23" Margin="0,60,66,0" VerticalAlignment="Top" Click="BtnOpenFileDialogForExcel_Click" Width="23" HorizontalAlignment="Right" Visibility="Hidden" Grid.Column="1"/>
+        <TextBox x:Name="TbFileName" Height="23" Margin="167.902,61,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="253" IsEnabled="False"  Visibility="Hidden" Grid.Column="1"/>
+        <TextBox x:Name="TbFileNameForExcel" Height="23" HorizontalAlignment="Left" Margin="167.902,61,0,0" VerticalAlignment="Top" Width="253" IsReadOnly="True" IsEnabled="False" Visibility="Hidden" Grid.Column="1"/>
+        <TextBox x:Name="TbTfs" Height="23" HorizontalAlignment="Left" Margin="167.902,16,0,0" VerticalAlignment="Top" Width="253" IsReadOnly="True" IsEnabled="False" Visibility="Hidden" Grid.Column="1"/>
 
 
-        <TreeView x:Name="TvSuites" Height="303" HorizontalAlignment="Left" Margin="252,132,0,0" VerticalAlignment="Top" Width="253" Background="White" BorderBrush="Black" Visibility="Hidden" />
-        <Button x:Name="BtnGenerate" Content="Generate" Height="23" HorizontalAlignment="Left" Margin="520,132,0,0" VerticalAlignment="Top" Width="66" Click="BtnGenerate_Click" Visibility="Hidden"/>
-        <ListBox x:Name="LbSelectTestPlan" HorizontalAlignment="Left" Height="303" Margin="9,132,0,0" VerticalAlignment="Top" Width="237" IsSynchronizedWithCurrentItem="True" SelectionChanged="LbSelectTestPlan_SelectionChanged" Visibility="Hidden"/>
+        <TreeView x:Name="TvSuites" Height="303" HorizontalAlignment="Left" Margin="167.902,132,0,0" VerticalAlignment="Top" Width="253" Background="White" BorderBrush="Black" Visibility="Hidden" Grid.Column="1" />
+        <Button x:Name="BtnGenerate" Content="Generate" Height="23" HorizontalAlignment="Left" Margin="435.902,132,0,0" VerticalAlignment="Top" Width="66" Click="BtnGenerate_Click" Visibility="Hidden" Grid.Column="1"/>
+        <ListBox x:Name="LbSelectTestPlan" HorizontalAlignment="Left" Height="303" Margin="9,132,0,0" VerticalAlignment="Top" Width="237" IsSynchronizedWithCurrentItem="True" SelectionChanged="LbSelectTestPlan_SelectionChanged" Visibility="Hidden" Grid.ColumnSpan="2"/>
 
 
         <!-- <Button x:Name="BtnGenerate" Content="Generate" Height="23" HorizontalAlignment="Left" Margin="252,110,0,0" VerticalAlignment="Top" Width="66" Click="BtnGenerate_Click" /> -->
-        <DockPanel LastChildFill="False"  x:Name="Docpanel" Margin="251,132,77,15" Visibility="Hidden">
+        <DockPanel LastChildFill="False"  x:Name="Docpanel" Margin="166.902,132,77,15" Visibility="Hidden" Grid.Column="1">
             <!-- <ListBox Name="lbUsers"  Width="404" Margin="0,0,0,10"  SelectionChanged="lbUsers_SelectionChanged"  FontFamily="Verdana" FontSize="10"></ListBox> -->
             <DataGrid  Width="280" BorderBrush="DimGray" IsEnabledChanged="DataGrid_IsEnabledChanged" x:Name="Mygrid" IsEnabled="False"  AutoGenerateColumns="True" HeadersVisibility="None" CanUserDeleteRows="True" GridLinesVisibility="None" SelectedItem="" ItemsSource="{Binding MylistElements}" HorizontalAlignment="Center" Height="303" VerticalAlignment="Center" >
                 <DataGrid.Columns>
@@ -112,10 +116,10 @@
             </DataGrid>
         </DockPanel>
 
-        <Button x:Name="SaveRequirement"  Click="SaveRequirement_Click"  Content="Save" FontWeight="Bold" Margin="532,393,13,31" Visibility="Hidden"/>
-        <Label x:Name="DecisionLabel" Content="Select Action Type" Margin="103,211,0,211" Foreground="White" FontStyle="Italic" FontSize="13" HorizontalAlignment="Left" Width="117" />
-        <ComboBox x:Name="LoadcomboBox" HorizontalAlignment="Left" Margin="388,211,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="LoadcomboBox_Selected"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="18" Margin="548,417,0,0" TextWrapping="Wrap" Text="V: 4.0"  FontStyle="Italic" VerticalAlignment="Top" Width="48" BorderThickness="0"/>
+        <Button x:Name="SaveRequirement"  Click="SaveRequirement_Click"  Content="Save" FontWeight="Bold" Margin="447.902,393,13,31" Visibility="Hidden" Grid.Column="1"/>
+        <Label x:Name="DecisionLabel" Content="Select Action Type" Margin="18.902,211,0,211" Foreground="White" FontStyle="Italic" FontSize="13" HorizontalAlignment="Left" Width="117" Grid.Column="1" />
+        <ComboBox x:Name="LoadcomboBox" HorizontalAlignment="Left" Margin="303.902,211,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="LoadcomboBox_Selected" Grid.Column="1"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="18" Margin="463.902,417,0,0" TextWrapping="Wrap" Text="V: 4.1"  FontStyle="Italic" VerticalAlignment="Top" Width="48" BorderThickness="0" Grid.Column="1"/>
 
 
 
