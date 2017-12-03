@@ -127,7 +127,7 @@ namespace TestCaseExtractor
         private void LbSelectTestPlan_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             TvSuites.Items.Clear();
-            GetTestSuites(LbSelectTestPlan.SelectedItem as ITestPlan);
+            GetTestSuites(LbSelectTestPlan.SelectedItem as ITestPlan,null);
             
 
 
@@ -136,7 +136,7 @@ namespace TestCaseExtractor
         }
 
 
-       public void GetTestSuites(ITestPlan selectedTestPlan)
+       public void GetTestSuites(ITestPlan selectedTestPlan , string allitemsHeader)
         {
             if (selectedTestPlan == null) return;
             var root = new TreeViewItem { Header = selectedTestPlan.RootSuite.Title };
@@ -144,13 +144,13 @@ namespace TestCaseExtractor
             root.Tag = selectedTestPlan.RootSuite.Id;
             
 
-            GetSubSuites(selectedTestPlan.RootSuite.SubSuites, root);
+            GetSubSuites(selectedTestPlan.RootSuite.SubSuites, root, allitemsHeader);
            
             _tvItem = selectedTestPlan.Id;
 
         }
 
-        static void GetSubSuites(IEnumerable<ITestSuiteBase> subSuiteEntries, ItemsControl treeNode)
+        static void GetSubSuites(IEnumerable<ITestSuiteBase> subSuiteEntries, ItemsControl treeNode,string allitemsHeader)
         {
             foreach (var suite in subSuiteEntries)
             {
@@ -162,7 +162,7 @@ namespace TestCaseExtractor
                     var suite1 = suite as IStaticTestSuite;
                     if (suite1.SubSuites.Count > 0)
                     {
-                        GetSubSuites(suite1.SubSuites, suiteTree);
+                        GetSubSuites(suite1.SubSuites, suiteTree, allitemsHeader);
                     }
                 }
             }
@@ -194,12 +194,12 @@ namespace TestCaseExtractor
         }
 
 
-        void Access_Documents(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject,string multifilename)
+        void Access_Documents(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject,string allitemsHeader)
         {
             if (LoadcomboBoxindex == 2)
             {
             DocX worddoc =ExportToWord.Access_word(rootSuite, _testProject, TbFileNameForExcel.Text);
-                GetTestSuites(rootSuite as IStaticTestSuite, null,null,worddoc, _testProject);
+                GetTestSuites(rootSuite as IStaticTestSuite, null,null,worddoc, _testProject, allitemsHeader);
 
                 worddoc.InsertTable(4, 4);
                 worddoc.Save();
@@ -234,12 +234,12 @@ namespace TestCaseExtractor
                         if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
                         {
                             //Bug  is here
-                            GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null, _testProject);
+                            GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null, _testProject, allitemsHeader);
                         }
 
                         if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
                         {
-                            GetTestCases(rootSuite as IRequirementTestSuite, worksheet, null);
+                            GetTestCases(rootSuite as IRequirementTestSuite, worksheet, null, allitemsHeader);
                             xlpackage.Save();
                         }
 
@@ -263,7 +263,10 @@ namespace TestCaseExtractor
                 try
                 {
 
-                    TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + multifilename + ".xlsx";
+
+                    System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader);
+
+                    TbFileNameForExcel.Text = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\"  + allitemsHeader + ".xlsx";
 
                     var newFile = new FileInfo(TbFileNameForExcel.Text);
 
@@ -272,7 +275,7 @@ namespace TestCaseExtractor
                     using (var xlpackage = new ExcelPackage(newFile, template))
                     {
                         ExcelWorksheet worksheet = xlpackage.Workbook.Worksheets[1];
-                        worksheet.Name = multifilename;
+                        worksheet.Name = allitemsHeader;
 
                         worksheet.OutLineSummaryBelow = false;
                         //xlpackage.Save();
@@ -281,12 +284,12 @@ namespace TestCaseExtractor
                         if (rootSuite.TestSuiteType == TestSuiteType.StaticTestSuite)
                         {
                             //Bug  is here
-                            GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null, _testProject);
+                            GetTestSuites(rootSuite as IStaticTestSuite, worksheet, xlpackage, null, _testProject, allitemsHeader);
                         }
 
                         if (rootSuite.TestSuiteType == TestSuiteType.RequirementTestSuite)
                         {
-                            GetTestCases(rootSuite as IRequirementTestSuite, worksheet, null);
+                            GetTestCases(rootSuite as IRequirementTestSuite, worksheet, null, allitemsHeader);
                             xlpackage.Save();
                         }
 
@@ -349,7 +352,7 @@ namespace TestCaseExtractor
 
         }
 
-        void WriteTestCases(ITestBase testCase, ExcelWorksheet worksheet, DocX worddoc, ITestManagementTeamProject _testProject)
+        void WriteTestCases(ITestBase testCase, ExcelWorksheet worksheet, DocX worddoc, ITestManagementTeamProject _testProject, string allitemsHeader)
         {
 
       
@@ -507,12 +510,12 @@ namespace TestCaseExtractor
                         { 
 
                         i++;
-                        string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id  + "-"  + attachs.Name;
+                        string localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\" + testCase.Id  + "-"  + attachs.Name;
 
                         if (!System.IO.File.Exists(@localFilename))
                         {
                             System.Uri uri = new System.Uri(localFilename);
-                            System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
+                            System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\" );
 
 
                             {
@@ -531,8 +534,8 @@ namespace TestCaseExtractor
 
                             {
                                 request.Credentials = System.Net.CredentialCache.DefaultCredentials;
-                                localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + testCase.Id + i + attachs.Name;
-                                System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\");
+                                localFilename = @absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\" + testCase.Id + "-" + attachs.Name;
+                                System.Uri uriForRelativeExcel = new System.Uri(@absolutepath + "\\" + _testProject.TeamProjectName + "\\" + allitemsHeader + "\\");
                                 request.DownloadFile(attachs.Uri, localFilename);
                                 System.Uri uri = new System.Uri(localFilename);
                                     worksheet.Cells[_i, 10 + i].Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -601,24 +604,24 @@ namespace TestCaseExtractor
             worksheet.Row(i + j).OutlineLevel = 2;
         }
 
-        private void GetTestCases(IRequirementTestSuite requirementTestSuite, ExcelWorksheet worksheet, DocX worddoc)
+        private void GetTestCases(IRequirementTestSuite requirementTestSuite, ExcelWorksheet worksheet, DocX worddoc,string allitemsHeader)
         {
             WriteSuiteToExcel(requirementTestSuite, worksheet);
             _i++;
             foreach (var testCase in requirementTestSuite.AllTestCases)
             {
-                WriteTestCases(testCase, worksheet, worddoc, _testProject);
+                WriteTestCases(testCase, worksheet, worddoc, _testProject, allitemsHeader);
                 _i++;
             }
         }
 
-        private void GetTestSuites(IStaticTestSuite staticTestSuite, ExcelWorksheet worksheet, ExcelPackage xlpackage, DocX worddoc, ITestManagementTeamProject _testProject)
+        private void GetTestSuites(IStaticTestSuite staticTestSuite, ExcelWorksheet worksheet, ExcelPackage xlpackage, DocX worddoc, ITestManagementTeamProject _testProject,string allitemsHeader)
         {
             _i = 3;
 
             foreach (var suiteEntry in staticTestSuite.Entries.Where(suiteEntry => suiteEntry.EntryType == TestSuiteEntryType.TestCase))
                {
-                    WriteTestCases(suiteEntry.TestCase, worksheet, worddoc,_testProject);
+                    WriteTestCases(suiteEntry.TestCase, worksheet, worddoc,_testProject, allitemsHeader);
                     _i++;
 
                 }
@@ -634,13 +637,13 @@ namespace TestCaseExtractor
                     _i++;
                     if (suite.Entries.Count > 0)
                     {
-                        GetTestSuites(suite, worksheet, xlpackage, null,_testProject);
+                        GetTestSuites(suite, worksheet, xlpackage, null,_testProject, allitemsHeader);
                     }
                 }
                 else
                 {
                     var suite = suiteEntry.TestSuite as IRequirementTestSuite;
-                    GetTestCases(suite, worksheet, worddoc);
+                    GetTestCases(suite, worksheet, worddoc, allitemsHeader);
                 }
             }
             xlpackage.Save();
@@ -744,7 +747,9 @@ namespace TestCaseExtractor
                 // subPath = @TbFileNameForExcel.Text;// your code goes here
 
                 System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName);
+            //    string maindirectory = @absolutepath + "\\" + _testProject.TeamProjectName;
 
+               
 
                 _i = 3;
 
@@ -776,6 +781,7 @@ namespace TestCaseExtractor
                         foreach (TreeViewItem item in tvItem.Items)
                         {
                             expandedTVI.Add(item);
+                           
                         }
 
                         
