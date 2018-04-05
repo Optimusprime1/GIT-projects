@@ -196,6 +196,8 @@ namespace TestCaseExtractor
 
         void Access_Documents(ITestSuiteBase rootSuite, ITestManagementTeamProject _testProject,string allitemsHeader)
         {
+
+            allitemsHeader = allitemsHeader.Replace(':', ' ').Replace('*', ' ').Replace('/', ' ');
             if (LoadcomboBoxindex == 2)
             {
             DocX worddoc =ExportToWord.Access_word(rootSuite, _testProject, TbFileNameForExcel.Text);
@@ -747,7 +749,7 @@ namespace TestCaseExtractor
                 //string subPath = null;
                 // subPath = @TbFileNameForExcel.Text;// your code goes here
 
-                System.IO.Directory.CreateDirectory(@absolutepath + "\\" + _testProject.TeamProjectName);
+                System.IO.Directory.CreateDirectory((@absolutepath + "\\" + _testProject.TeamProjectName).Replace(':', ' ').Replace('*', ' ').Replace('/', ' '));
             //    string maindirectory = @absolutepath + "\\" + _testProject.TeamProjectName;
 
                
@@ -781,7 +783,16 @@ namespace TestCaseExtractor
                         List<TreeViewItem> expandedTVI = new List<TreeViewItem>();
                         foreach (TreeViewItem item in tvItem.Items)
                         {
-                            expandedTVI.Add(item);
+                            if (item.ItemContainerGenerator.Items.Count == 0)
+                            {
+                                expandedTVI.Add(item);
+                            }
+                            else if (item.ItemContainerGenerator.Items.Count >= 1)
+                            {
+                                var subtreeitem = item as TreeViewItem;
+                                foreach (TreeViewItem subitem in subtreeitem.Items) { expandedTVI.Add(subitem); }
+                            }
+                          
                            
                         }
 
@@ -825,6 +836,7 @@ namespace TestCaseExtractor
 
         ///Below part is for Requirements generation
         ///
+
 
 
         void BtnConnect_Click(object sender, RoutedEventArgs e)
