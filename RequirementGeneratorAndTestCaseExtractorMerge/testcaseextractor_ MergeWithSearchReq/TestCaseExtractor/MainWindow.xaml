@@ -119,7 +119,7 @@
         <Button x:Name="SaveRequirement"  Click="SaveRequirement_Click"  Content="Save" FontWeight="Bold" Margin="447.902,393,13,31" Visibility="Hidden" Grid.Column="1"/>
         <Label x:Name="DecisionLabel" Content="Select Action Type" Margin="18.902,211,0,211" Foreground="White" FontStyle="Italic" FontSize="13" HorizontalAlignment="Left" Width="117" Grid.Column="1" />
         <ComboBox x:Name="LoadcomboBox" HorizontalAlignment="Left" Margin="303.902,211,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="LoadcomboBox_Selected" Grid.Column="1"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="18" Margin="463.902,417,0,0" TextWrapping="Wrap" Text="V: 4.1"  FontStyle="Italic" VerticalAlignment="Top" Width="48" BorderThickness="0" Grid.Column="1"/>
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="18" Margin="463.902,417,0,0" TextWrapping="Wrap" Text="V: 4.2"  FontStyle="Italic" VerticalAlignment="Top" Width="48" BorderThickness="0" Grid.Column="1"/>
 
 
 
