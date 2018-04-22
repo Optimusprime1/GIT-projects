@@ -15,6 +15,8 @@ using System.Collections.ObjectModel;
 using Novacode;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.TeamFoundation.Common.Internal;
+using System.Windows.Threading;
 
 namespace TestCaseExtractor
 {
@@ -41,6 +43,7 @@ namespace TestCaseExtractor
         private ITestSuiteBase _suite;
         int _i = 3;
         public System.Windows.Controls.DataGrid sender;
+        List<TreeViewItem> expandedTVI = new List<TreeViewItem>();
         List<string> myCollection = new List<string>();
         public ObservableCollection<MylistElements> Datagriditems;
         public string  rootsuiteid;
@@ -53,6 +56,8 @@ namespace TestCaseExtractor
         {
             InitializeComponent();
         }
+
+      
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -82,6 +87,8 @@ namespace TestCaseExtractor
             _testPlanCollection = _testProject.TestPlans.Query("Select * from TestPlan");
 
             ProjectSelected_GetTestPlans();
+
+
 
         }
 
@@ -745,34 +752,33 @@ namespace TestCaseExtractor
             }
             else
             {
-
-                //string subPath = null;
-                // subPath = @TbFileNameForExcel.Text;// your code goes here
+                BtnGenerate.IsEnabled = false;
 
                 System.IO.Directory.CreateDirectory((@absolutepath + "\\" + _testProject.TeamProjectName).Replace(':', ' ').Replace('*', ' ').Replace('/', ' '));
-            //    string maindirectory = @absolutepath + "\\" + _testProject.TeamProjectName;
 
                
-
                 _i = 3;
 
-
-
+                //  WindowState = WindowState.Minimized;
+                WinMainWindow.Cursor = System.Windows.Input.Cursors.Wait;
 
                 if (TvSuites.SelectedValue != null)
                 {
-                    var tvItem = TvSuites.SelectedItem as TreeViewItem;
-
+                   TreeViewItem tvItem = TvSuites.SelectedItem as TreeViewItem;
 
                     if (tvItem.Items.Count == 0)
                     {
-
+                        
                         _suite = _testProject.TestSuites.Find(Convert.ToInt32(tvItem.Tag));
 
                         if (_suite != null)
                         {
 
-                            Access_Documents(_suite, _testProject, tvItem.Header.ToString());
+                            BtnGenerate.Dispatcher.BeginInvoke(
+                               DispatcherPriority.Background,
+                               new Action<ITestSuiteBase,ITestManagementTeamProject,string> (Access_Documents), _suite, _testProject, tvItem.Header.ToString());
+
+                           // Access_Documents(_suite, _testProject, tvItem.Header.ToString());
                         }
 
                     }
@@ -780,38 +786,32 @@ namespace TestCaseExtractor
 
                     else if (tvItem.Items.Count > 1)
                     {
-                        List<TreeViewItem> expandedTVI = new List<TreeViewItem>();
-                        foreach (TreeViewItem item in tvItem.Items)
-                        {
+                       
+                      //  List<TreeViewItem> expandedTVI = new List<TreeViewItem>();
+                   
+                                          
+                            expandedTVI=(GetSubSuitesXXX(tvItem));
+/*
                             if (item.ItemContainerGenerator.Items.Count == 0)
                             {
                                 expandedTVI.Add(item);
                             }
                             else if (item.ItemContainerGenerator.Items.Count >= 1)
                             {
-                                var subtreeitem = item as TreeViewItem;
-                                foreach (TreeViewItem subitem in subtreeitem.Items) { expandedTVI.Add(subitem); }
+                                var subtreeitem = item as TreeViewItem;                          
+                                foreach (TreeViewItem subitem in subtreeitem.Items)
+                                { expandedTVI.Add(subitem);}
                             }
-                          
-                           
-                        }
+                       */
 
                         
-                        /*
-                        foreach (TreeViewItem collectiontest in expandedTVI) {
-                            collectiontest.h
-                        } 
-                        */
-                        
+           
                         Parallel.ForEach(expandedTVI, (allitems) =>
                        {
                            
                            this.Dispatcher.BeginInvoke(new Action(() =>
                            
                            Access_Documents(_testProject.TestSuites.Find(Convert.ToInt32(allitems.Tag)), _testProject, allitems.Header.ToString())), null);
-
-
-
 
                            System.Threading.Thread.Sleep(2);
                        });
@@ -836,8 +836,37 @@ namespace TestCaseExtractor
 
         ///Below part is for Requirements generation
         ///
+        public List<TreeViewItem> GetSubSuitesXXX(TreeViewItem node)
+        {
+
+            if (node.Items.Count == 0)
+            {
+                expandedTVI.Add(node);
+
+            }
+
+           
+                foreach (TreeViewItem item in node.Items)
+                {
 
 
+                    if (item.ItemContainerGenerator.Items.Count == 0)
+                    {
+                        expandedTVI.Add(item);
+
+                    }
+                    else if (item.ItemContainerGenerator.Items.Count >= 1)
+                    {
+                        var subtreeitem = item as TreeViewItem;
+                        foreach (TreeViewItem subitem in subtreeitem.Items)
+                        { GetSubSuitesXXX(subitem); }
+                    }
+                  
+
+                }
+            
+            return expandedTVI;
+        }
 
         void BtnConnect_Click(object sender, RoutedEventArgs e)
         {
@@ -865,7 +894,8 @@ namespace TestCaseExtractor
 
         private void BtnOpenFileDialog_Click(object sender, RoutedEventArgs e)
         {
-
+           
+          
             if (!TbTfs.Text.Equals(""))
             {
 
